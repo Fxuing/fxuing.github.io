@@ -80,4 +80,4 @@ Base64.getEncoder().encodeToString(baos.toByteArray());
 
     在浏览器中，可用 data:image/png;base64 ,查看base64图片,如
 
-![](C:\Users\HOUFUXING\AppData\Roaming\marktext\images\2020-06-17-18-39-53-image.png)
+![](/images/2020-06-17-18-39-53-image.png)
