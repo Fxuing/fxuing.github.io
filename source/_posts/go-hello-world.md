@@ -1,5 +1,6 @@
 ---
 title: go-Hello World
+date: 2020年6月16日
 comments: true
 categories: go
 tags:

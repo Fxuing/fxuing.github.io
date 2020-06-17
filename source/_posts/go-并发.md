@@ -1,5 +1,6 @@
 ---
 title: go-并发
+date: 2020年6月16日
 comments: true
 categories: go
 tags:

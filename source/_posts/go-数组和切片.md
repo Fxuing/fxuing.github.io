@@ -1,5 +1,6 @@
 ---
 title: go-数组和切片
+date: 2020年6月16日
 comments: true
 categories: go
 tags:

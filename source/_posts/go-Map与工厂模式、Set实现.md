@@ -1,5 +1,7 @@
 ---
 title: go-Map与工厂模式、Set实现
+date: 2020年6月16日
+date: 2020年6月16日
 comments: true
 categories: go
 tags:
