@@ -1,5 +1,5 @@
 ---
-title: go-Hello World
+title: go-数据类型
 comments: true
 categories: go
 tags:
