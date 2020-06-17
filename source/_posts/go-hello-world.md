@@ -1,9 +1,8 @@
 ---
 title: go-Hello World
 comments: true
+categories: go
 tags:
-- go
-- golang
 ---
 
 ```go
