@@ -7,7 +7,7 @@ tags:
 - 二维码
 ---
 
-## 1. 导入maven依赖
+### 1. 导入maven依赖
 
 ```java
 <dependency>
@@ -22,7 +22,9 @@ tags:
 </dependency>
 ```
 
-## 2. 二维码工具类
+<!--more-->
+
+### 2. 二维码工具类
 
 ```java
 package com.odp.api.common.utils;
