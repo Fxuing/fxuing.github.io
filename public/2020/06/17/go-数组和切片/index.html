@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="基本数据类型  bool string int int8 int16 int 32 int 64 uint uint8 uint16 uint32 uint64 uintptr byte rune float32 float64 complex64 complex128  类型转化和其他主要编程语言的差异  Go语言不允许隐式类型转换 别和原有类型也不能进行隐式转换">
+  <meta name="description" content="数组声明和遍历 1234567891011121314func TestArrayInit(t *testing.T) &amp;#123;	var arr [3]int	arr1 := [4]int&amp;#123;1, 2, 3, 4&amp;#125;	arr2 := [...]int&amp;#123;1, 2, 3, 4, 5, 6&amp;#125;	t.Log(arr[0], arr[1])	t.Log(arr1,arr">
 <meta name="keywords" content="java,javaee,spring,springboot,go,golang,gorm,gin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="go-数据类型">
-<meta property="og:url" content="http://yoursite.com/2020/06/17/go-datatype/index.html">
+<meta property="og:title" content="go-数组和切片">
+<meta property="og:url" content="http://yoursite.com/2020/06/17/go-数组和切片/index.html">
 <meta property="og:site_name" content="一只秋田犬">
-<meta property="og:description" content="基本数据类型  bool string int int8 int16 int 32 int 64 uint uint8 uint16 uint32 uint64 uintptr byte rune float32 float64 complex64 complex128  类型转化和其他主要编程语言的差异  Go语言不允许隐式类型转换 别和原有类型也不能进行隐式转换">
+<meta property="og:description" content="数组声明和遍历 1234567891011121314func TestArrayInit(t *testing.T) &amp;#123;	var arr [3]int	arr1 := [4]int&amp;#123;1, 2, 3, 4&amp;#125;	arr2 := [...]int&amp;#123;1, 2, 3, 4, 5, 6&amp;#125;	t.Log(arr[0], arr[1])	t.Log(arr1,arr">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2020-06-17T10:01:33.541Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="go-数据类型">
-<meta name="twitter:description" content="基本数据类型  bool string int int8 int16 int 32 int 64 uint uint8 uint16 uint32 uint64 uintptr byte rune float32 float64 complex64 complex128  类型转化和其他主要编程语言的差异  Go语言不允许隐式类型转换 别和原有类型也不能进行隐式转换">
+<meta name="twitter:title" content="go-数组和切片">
+<meta name="twitter:description" content="数组声明和遍历 1234567891011121314func TestArrayInit(t *testing.T) &amp;#123;	var arr [3]int	arr1 := [4]int&amp;#123;1, 2, 3, 4&amp;#125;	arr2 := [...]int&amp;#123;1, 2, 3, 4, 5, 6&amp;#125;	t.Log(arr[0], arr[1])	t.Log(arr1,arr">
 
-<link rel="canonical" href="http://yoursite.com/2020/06/17/go-datatype/">
+<link rel="canonical" href="http://yoursite.com/2020/06/17/go-数组和切片/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>go-数据类型 | 一只秋田犬</title>
+  <title>go-数组和切片 | 一只秋田犬</title>
   
 
 
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/17/go-datatype/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/17/go-数组和切片/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/favicon.png">
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          go-数据类型
+          go-数组和切片
         </h1>
 
         <div class="post-meta">
@@ -221,37 +221,38 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong>基本数据类型</strong></p>
-<ol>
-<li>bool</li>
-<li>string</li>
-<li>int int8 int16 int 32 int 64</li>
-<li>uint uint8 uint16 uint32 uint64 uintptr</li>
-<li>byte</li>
-<li>rune</li>
-<li>float32 float64</li>
-<li>complex64 complex128</li>
-</ol>
-<p><strong>类型转化和其他主要编程语言的差异</strong></p>
-<ol>
-<li>Go语言不允许隐式类型转换</li>
-<li>别和原有类型也不能进行隐式转换<a id="more"></a>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> type_test</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyInt <span class="keyword">int64</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestImplicit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a <span class="keyword">int32</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> b <span class="keyword">int64</span></span><br><span class="line">	b = <span class="keyword">int64</span>(a)</span><br><span class="line">	<span class="keyword">var</span> c MyInt</span><br><span class="line">	c = MyInt(b)</span><br><span class="line">	t.Log(b,c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p><strong>数组声明和遍历</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArrayInit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> arr [<span class="number">3</span>]<span class="keyword">int</span></span><br><span class="line">	arr1 := [<span class="number">4</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	arr2 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	t.Log(arr[<span class="number">0</span>], arr[<span class="number">1</span>])</span><br><span class="line">	t.Log(arr1,arr2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArrayTravel</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	arr3 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">	<span class="keyword">for</span> i,e := <span class="keyword">range</span> arr3&#123;</span><br><span class="line">		t.Log(i,e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-</li>
-</ol>
-<p><strong>类型的预定义值</strong></p>
+<a id="more"></a>
+<p><strong>数组截取</strong></p>
+<ul>
+<li>a[开始索引(包含),结束索引(不包含)]</li>
+<li>a[3:],a[:3] </li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArraySection</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	arr3 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">	arr3_sec := arr3[<span class="number">3</span>:]</span><br><span class="line">	t.Log(arr3_sec)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片slice</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceInit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slice []<span class="keyword">int</span></span><br><span class="line">	t.Log(<span class="built_in">len</span>(slice), <span class="built_in">cap</span>(slice))</span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">1</span>)</span><br><span class="line">	t.Log(<span class="built_in">len</span>(slice), <span class="built_in">cap</span>(slice))</span><br><span class="line"></span><br><span class="line">	s1 := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	t.Log(<span class="built_in">len</span>(s1), <span class="built_in">cap</span>(s1))</span><br><span class="line"></span><br><span class="line">	s2 := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line">	t.Log(<span class="built_in">len</span>(s2), <span class="built_in">cap</span>(s2))</span><br><span class="line">	t.Log(s2[<span class="number">0</span>], s2[<span class="number">1</span>], s2[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片扩容</strong></p>
+<blockquote>
+<p>容量会 *2 扩展</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceGrowing</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s []<span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		s = <span class="built_in">append</span>(s, i)</span><br><span class="line">		t.Log(<span class="built_in">len</span>(s),<span class="built_in">cap</span>(s))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片共享存储结构</strong></p>
+<blockquote>
+<p>修改一个值会影响到其他的值</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceShareMemory</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	year := []<span class="keyword">string</span>&#123;</span><br><span class="line">		<span class="string">"一月"</span>, <span class="string">"二月"</span>, <span class="string">"三月"</span>, <span class="string">"四月"</span>,</span><br><span class="line">		<span class="string">"五月"</span>, <span class="string">"六月"</span>, <span class="string">"七月"</span>, <span class="string">"八月"</span>,</span><br><span class="line">		<span class="string">"九月"</span>, <span class="string">"十月"</span>, <span class="string">"十一月"</span>, <span class="string">"十二月"</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	Q2 := year[<span class="number">3</span>:<span class="number">6</span>]</span><br><span class="line">	t.Log(Q2, <span class="built_in">len</span>(Q2), <span class="built_in">cap</span>(Q2))</span><br><span class="line">	summer := year[<span class="number">5</span>:<span class="number">8</span>]</span><br><span class="line">	t.Log(summer,<span class="built_in">len</span>(summer),<span class="built_in">cap</span>(summer))</span><br><span class="line">	summer[<span class="number">0</span>] = <span class="string">"Unknow"</span></span><br><span class="line">	t.Log(Q2)</span><br><span class="line">	t.Log(year)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数组和切片的区别</strong></p>
 <ol>
-<li>math.MaxInt64</li>
-<li>math.MaxFloat64</li>
-<li>math.MaxUint32</li>
+<li>容量是否可伸缩</li>
+<li>是否可以进行比较</li>
 </ol>
-<p><strong>指针类型</strong></p>
-<ol>
-<li>不支持指针运算</li>
-<li>string是值类型，其默认的初始化为空字符串，而不是nil</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestPoint</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	a := <span class="number">1</span></span><br><span class="line">	aPtr := &amp;a</span><br><span class="line">	<span class="comment">//aPtr++</span></span><br><span class="line">	t.Log(a, aPtr)</span><br><span class="line">	t.Logf(<span class="string">"%T %T"</span>, a, aPtr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestString</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s <span class="keyword">string</span></span><br><span class="line">	t.Log(<span class="string">"*"</span> + s + <span class="string">"*"</span>)</span><br><span class="line">	<span class="keyword">if</span> s == <span class="string">""</span> &#123;</span><br><span class="line">		t.Log(<span class="built_in">len</span>(s))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -266,12 +267,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/06/17/go-hello-world/" rel="prev" title="go-Hello World">
-      <i class="fa fa-chevron-left"></i> go-Hello World
+    <a href="/2020/06/17/go-条件和循环/" rel="prev" title="go-条件和循环">
+      <i class="fa fa-chevron-left"></i> go-条件和循环
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/06/17/java-使用google.zxing生成二维码/" rel="next" title="java-使用google.zxing生成二维码">
-      java-使用google.zxing生成二维码 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/06/17/go-并发/" rel="next" title="go-并发">
+      go-并发 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
