@@ -12,7 +12,7 @@ map[string]string{}
 
 **获取key**
 > 在访问的key不存在时，仍会然回零值，不能通过返回nil来判断元素是否存在
-
+<!--more-->
 ```go
 func TestGetKey(t *testing.T) {
 	m1 := map[int]int{}

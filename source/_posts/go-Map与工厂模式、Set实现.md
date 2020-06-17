@@ -19,7 +19,7 @@ func TestMapWithFunValue(t *testing.T) {
 }
 ```
 * 与Go的 Dock type 接口方式一，可以方便的实现单一方法的工厂模式
-
+<!--more-->
 
 **实现Set**
 

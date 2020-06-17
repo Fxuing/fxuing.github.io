@@ -10,7 +10,7 @@ tags:
 1. string 是数据类型，不是引用或指针类型
 2. string是只读的byte sclice,len函数可以返回它包含的byte长度
 3. string的byte数可以存放任何数据
-
+<!--more-->
 
 **Unicode UTF-8**
 

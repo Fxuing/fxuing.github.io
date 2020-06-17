@@ -23,7 +23,7 @@ func TestArrayTravel(t *testing.T) {
 	}
 }
 ```
-
+<!--more-->
 **数组截取**
 * a[开始索引(包含),结束索引(不包含)]
 * a[3:],a[:3] 

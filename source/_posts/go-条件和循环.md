@@ -20,7 +20,7 @@ func TestWhileLoop(t *testing.T) {
 }
 ```
 **条件**
-
+<!--more-->
 * if 条件
 
 1. condition 表达式必须布尔值

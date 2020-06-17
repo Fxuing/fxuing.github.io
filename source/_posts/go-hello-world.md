@@ -14,7 +14,7 @@ func main(){ // 功能实现
 	fmt.Println("hello world")
 }
 ```
-
+<!--more-->
 > 应用程序入口
 
 * 必须是main包
