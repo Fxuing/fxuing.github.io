@@ -7,11 +7,9 @@ tags:
 - hexo
 ---
 
-    hexo 是一个快速、简洁且高效的博客框架。hexo使用Markdown解析文章，在几秒内，即可利用靓丽的主题生成静态网页
-
+    hexo 是一个快速、简洁且高效的博客框架。hexo使用Markdown解析文章，在几秒内，即可利用靓丽的主题生成静态网页.
 
 <!--more-->
-
 
 ## 方式一： 参考官方文档
 
@@ -47,13 +45,34 @@ $ hexo server
 ## 方式二：docker部署
 
 1. 编写 docker-compose.yml
+
+```yml
+ 24   blog:
+ 25     image: zeusro/hexo
+ 26     container_name: blog
+ 27     restart: always
+ 28     ports:
+ 29       - 4000:4000
+```
+
+执行`docker-compose up -d`，可以访问到了，下一步目录挂载
+
+2. 挂载目录
 * /data/blog 是我存放的目录，我是整个目录挂载，可根据需求，自行变更
   
    执行 ` docker exec blog ls / ` 可以看到，需要挂载的目录是 docker-hexo 
   
    ![UTOOLS1592555337252.png](https://user-gold-cdn.xitu.io/2020/6/19/172cbb1fb6041a85?w=645&h=408&f=png&s=11908)
 
-yml如下：
+先将 容器里的 hexo 文件复制出来 `docker cp blog:/docker-hexo .`，这是复制到当前目录
+
+
+
+> 命令解释： docker cp 容器:需要复制的目录 宿主机目录
+
+
+
+最终yml如下：
 
 ```yml
  24   blog:
@@ -73,5 +92,3 @@ yml如下：
 // TODO 主题修改，自行参考官方文档
 
 [文档 | Hexo](https://hexo.io/zh-cn/docs/)
-
-
