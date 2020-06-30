@@ -27,7 +27,7 @@ import (
 
 func main() {
 	// 写入
-    clipboard.WriteAll(`复制这段内容到剪切板`)
+    clipboard.WriteAll(`写入到剪贴板`)
 
     // 读取
     content, err := clipboard.ReadAll()
