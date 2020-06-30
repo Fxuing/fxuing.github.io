@@ -1,5 +1,5 @@
 ---
-title: 生成微信小程序码
+title: go访问剪贴板
 date: 2020年6月30日
 comments: true
 categories: go
