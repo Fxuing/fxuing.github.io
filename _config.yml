@@ -6,14 +6,14 @@
 title: 一只秋田犬
 subtitle: —— 记录日常开发
 description: 
-keywords: java,javaee,spring,springboot,go,golang,gorm,gin
+keywords: java,javaee,spring,springboot,go,golang,gorm,gin,一只秋田犬
 author: Houfx
 language: 'zh-CN'
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://www.fxuing.top
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -82,4 +82,3 @@ deploy:
 
 ######
 theme: next
-

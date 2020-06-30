@@ -1,6 +1,7 @@
 ---
 title: java-使用google.zxing生成二维码
 date: 2020年6月16日
+updated: 2020年6月17日
 comments: true
 categories: java
 tags:

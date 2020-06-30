@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>go-Map声明、访问、遍历</title>
+    <url>/2020/06/17/go-Map%E5%A3%B0%E6%98%8E%E3%80%81%E8%AE%BF%E9%97%AE%E3%80%81%E9%81%8D%E5%8E%86/</url>
+    <content><![CDATA[<p><strong>声明方式</strong></p>
+<blockquote>
+<p>map[key类型]value类型{},如<br>map[string]string{}</p>
+</blockquote>
+<p><strong>获取key</strong></p>
+<blockquote>
+<p>在访问的key不存在时，仍会然回零值，不能通过返回nil来判断元素是否存在</p>
+</blockquote>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestGetKey</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	m1 := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	t.Log(m1[<span class="number">100</span>])</span><br><span class="line"></span><br><span class="line">	m1[<span class="number">2</span>] = <span class="number">0</span></span><br><span class="line">	t.Log(m1[<span class="number">2</span>])</span><br><span class="line">	m1[<span class="number">20</span>] = <span class="number">2000</span></span><br><span class="line">	<span class="keyword">if</span> value,exist := m1[<span class="number">20</span>]; exist&#123;</span><br><span class="line">		t.Log(<span class="string">"key 存在"</span>,value)</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		t.Log(<span class="string">"key 不存在"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>map遍历</strong></p>
+<ul>
+<li>遍历也是使用range,与数组遍历一样</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestTravelMap</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	m1 := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;<span class="string">"name"</span>: <span class="string">"小张"</span>, <span class="string">"password"</span>: <span class="string">"123456"</span>&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> k, v := <span class="keyword">range</span> m1 &#123;</span><br><span class="line">		t.Logf(<span class="string">"key is %s,value is %s"</span>, k, v)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-Map与工厂模式、Set实现</title>
+    <url>/2020/06/17/go-Map%E4%B8%8E%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E3%80%81Set%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<p><strong>Map与工厂模式</strong></p>
+<ul>
+<li><p>map的value可以是一个方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMapWithFunValue</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	m := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="function"><span class="keyword">func</span><span class="params">(in <span class="keyword">int</span>)</span> <span class="title">int</span></span>&#123;&#125;</span><br><span class="line">	m[<span class="number">1</span>] = <span class="function"><span class="keyword">func</span><span class="params">(in <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> in &#125;</span><br><span class="line">	m[<span class="number">2</span>] = <span class="function"><span class="keyword">func</span><span class="params">(in <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> in * in &#125;</span><br><span class="line">	m[<span class="number">3</span>] = <span class="function"><span class="keyword">func</span><span class="params">(in <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123; <span class="keyword">return</span> in * in * in &#125;</span><br><span class="line"></span><br><span class="line">	t.Log(m[<span class="number">1</span>](<span class="number">3</span>), m[<span class="number">2</span>](<span class="number">3</span>), m[<span class="number">3</span>](<span class="number">3</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>与Go的 Dock type 接口方式一，可以方便的实现单一方法的工厂模式</p>
+<a id="more"></a>
+
+</li>
+</ul>
+<p><strong>实现Set</strong></p>
+<ul>
+<li>go的内置集合中没有Set实现，可以map[type]bool</li>
+</ul>
+<ol>
+<li>元素的唯一性</li>
+<li>基本操作（添加元素，判断是否存在，删除元素，元素个数)</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMapForSet</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	mySet := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">bool</span>&#123;&#125;</span><br><span class="line">	<span class="comment">// 添加</span></span><br><span class="line">	mySet[<span class="number">1</span>] = <span class="literal">true</span></span><br><span class="line">	<span class="comment">// 判断元素是否存在</span></span><br><span class="line">	<span class="keyword">if</span> mySet[<span class="number">1</span>] &#123;</span><br><span class="line">		t.Log(<span class="string">"key 1 存在"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 元素个数</span></span><br><span class="line">	t.Log(<span class="built_in">len</span>(mySet))</span><br><span class="line">	<span class="comment">// 删除元素</span></span><br><span class="line">	<span class="built_in">delete</span>(mySet,<span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-数据类型</title>
+    <url>/2020/06/17/go-datatype/</url>
+    <content><![CDATA[<p><strong>基本数据类型</strong></p>
+<ol>
+<li>bool</li>
+<li>string</li>
+<li>int int8 int16 int 32 int 64</li>
+<li>uint uint8 uint16 uint32 uint64 uintptr</li>
+<li>byte</li>
+<li>rune</li>
+<li>float32 float64</li>
+<li>complex64 complex128</li>
+</ol>
+<p><strong>类型转化和其他主要编程语言的差异</strong></p>
+<ol>
+<li>Go语言不允许隐式类型转换</li>
+<li>别和原有类型也不能进行隐式转换<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> type_test</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"testing"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyInt <span class="keyword">int64</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestImplicit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a <span class="keyword">int32</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> b <span class="keyword">int64</span></span><br><span class="line">	b = <span class="keyword">int64</span>(a)</span><br><span class="line">	<span class="keyword">var</span> c MyInt</span><br><span class="line">	c = MyInt(b)</span><br><span class="line">	t.Log(b,c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>类型的预定义值</strong></p>
+<ol>
+<li>math.MaxInt64</li>
+<li>math.MaxFloat64</li>
+<li>math.MaxUint32</li>
+</ol>
+<p><strong>指针类型</strong></p>
+<ol>
+<li>不支持指针运算</li>
+<li>string是值类型，其默认的初始化为空字符串，而不是nil</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestPoint</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	a := <span class="number">1</span></span><br><span class="line">	aPtr := &amp;a</span><br><span class="line">	<span class="comment">//aPtr++</span></span><br><span class="line">	t.Log(a, aPtr)</span><br><span class="line">	t.Logf(<span class="string">"%T %T"</span>, a, aPtr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestString</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s <span class="keyword">string</span></span><br><span class="line">	t.Log(<span class="string">"*"</span> + s + <span class="string">"*"</span>)</span><br><span class="line">	<span class="keyword">if</span> s == <span class="string">""</span> &#123;</span><br><span class="line">		t.Log(<span class="built_in">len</span>(s))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-字符串</title>
+    <url>/2020/06/17/go-%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
+    <content><![CDATA[<p><strong><em>与其他语言的差异</em></strong></p>
+<ol>
+<li>string 是数据类型，不是引用或指针类型</li>
+<li>string是只读的byte sclice,len函数可以返回它包含的byte长度</li>
+<li>string的byte数可以存放任何数据<a id="more"></a>
+
+</li>
+</ol>
+<p><strong>Unicode UTF-8</strong></p>
+<ol>
+<li>Unicode 是一种字符集</li>
+<li>UTF-8是unicode 的存储实现</li>
+</ol>
+<p>常用转换</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestStringConv</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 整型转string</span></span><br><span class="line">	s := strconv.Itoa(<span class="number">10</span>)</span><br><span class="line">	t.Logf(<span class="string">"s type is %[1]T value is %[1]s"</span>, s)</span><br><span class="line">	<span class="comment">// 字符串转整型</span></span><br><span class="line">	val,_ :=strconv.Atoi(<span class="string">"10"</span>)</span><br><span class="line">	t.Log(val+<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">	t.Log(Str2DEC(<span class="string">"1000"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-函数</title>
+    <url>/2020/06/17/go-%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<ol>
+<li>可以有多个返回值</li>
+<li>所有参数都是值传递</li>
+<li>函数可以作为变量的值</li>
+<li>函数可以作为参数和返回值<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> _func</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"math/rand"</span></span><br><span class="line">	<span class="string">"testing"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">returnMultiValues</span><span class="params">()</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> rand.Intn(<span class="number">10</span>), rand.Intn(<span class="number">20</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeSpent</span><span class="params">(inner <span class="keyword">func</span>(op <span class="keyword">int</span>)</span> <span class="title">int</span>) <span class="title">func</span><span class="params">(op <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">		start := time.Now()</span><br><span class="line">		ret := inner(n)</span><br><span class="line"></span><br><span class="line">		fmt.Println(<span class="string">"time spent:"</span>, time.Since(start).Seconds())</span><br><span class="line">		<span class="keyword">return</span> ret</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">slowFun</span><span class="params">(op <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	time.Sleep(time.Second* <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">return</span> op</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestFn</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	a, b := returnMultiValues()</span><br><span class="line">	t.Log(a, b)</span><br><span class="line">	tsSF := timeSpent(slowFun)</span><br><span class="line">	t.Log(tsSF(<span class="number">10</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-并发</title>
+    <url>/2020/06/17/go-%E5%B9%B6%E5%8F%91/</url>
+    <content><![CDATA[<p><strong>协程机制</strong></p>
+<blockquote>
+<p>定义方式 使用 go 关键字</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMut</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//定义协程</span></span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">     <span class="comment">// code </span></span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p><strong>互斥锁</strong></p>
+<blockquote>
+<p>使用 sync.Mutex 包</p>
+</blockquote>
+<ul>
+<li>Unlock() 释放锁，建议在defer中使用，防止异常未释放锁</li>
+<li>Lock() 加锁，操作之前加锁</li>
+</ul>
+<p><strong>线程等待</strong></p>
+<blockquote>
+<p>使用 sync.WaitGroup，类似 java 的 CountDownLatch</p>
+</blockquote>
+<ul>
+<li>启用协程 使用 add(1)</li>
+<li>协程结束后使用 Done()</li>
+<li>主线程使用 Wait()</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestG</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> waitGroup sync.WaitGroup</span><br><span class="line">	<span class="keyword">var</span> mut sync.Mutex</span><br><span class="line">	<span class="keyword">var</span> counter <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5000</span>; i++ &#123;</span><br><span class="line">		waitGroup.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">				mut.Unlock()</span><br><span class="line">			&#125;()</span><br><span class="line">			mut.Lock()</span><br><span class="line">			counter++</span><br><span class="line">			waitGroup.Done()</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	waitGroup.Wait()</span><br><span class="line">	t.Log(counter)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CSP并发机制"><a href="#CSP并发机制" class="headerlink" title="CSP并发机制"></a>CSP并发机制</h3><p><strong>channel</strong></p>
+<blockquote>
+<p>两种机制，1. make(chan string), 2. make(chan string, 5)</p>
+</blockquote>
+<ul>
+<li>机制1：通讯双方都必须存在，如果一方不存在，则另一方会阻塞。</li>
+<li>机制2：BufferChannel，发送和接收双方松耦合，容量未满的情况下，不会阻塞</li>
+</ul>
+<p>异步返回信息:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">service</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">//time.Sleep(time.Millisecond * 50)</span></span><br><span class="line">	<span class="keyword">return</span> <span class="string">"执行业务操作中"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AsyncService</span><span class="params">()</span> <span class="title">chan</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	retCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		ret := service()</span><br><span class="line">		retCh &lt;- ret</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> retCh</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ohterTask</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"执行其他任务开始。"</span>)</span><br><span class="line">	<span class="comment">//time.Sleep(time.Millisecond * 100)</span></span><br><span class="line">	fmt.Println(<span class="string">"执行其他任务结束。"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestAsynService</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	retCh := AsyncService()</span><br><span class="line">	ohterTask()</span><br><span class="line">	fmt.Println(&lt;-retCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>select 多路复用</strong></p>
+<blockquote>
+<p>与 switch 结构类似，当有channel 未阻塞时，执行case 所定义的部分，与case 定义顺序无关；可用 &lt;- time.After 实现超时，当After未达到时间的时候，After会阻塞，当达到时间的时候，After不会阻塞。</p>
+</blockquote>
+<ol>
+<li><p>结构定义示例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span>&#123;</span><br><span class="line">    <span class="keyword">case</span> ret:= &lt;- xxx():</span><br><span class="line">        <span class="comment">// code</span></span><br><span class="line">    <span class="keyword">case</span> ret:= &lt;- xxx():</span><br><span class="line">        <span class="comment">// code </span></span><br><span class="line">    <span class="keyword">case</span> &lt;- time.After(time.Second *<span class="number">3</span>)</span><br><span class="line">        <span class="comment">// time out code</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// default code </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>示例</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timeout</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	time.Sleep(time.Second * <span class="number">3</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"userInfo======="</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">userInfo</span><span class="params">()</span> <span class="title">chan</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	userCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		ret := timeout()</span><br><span class="line">		userCh &lt;- ret</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> userCh</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addressInfo</span><span class="params">()</span> <span class="title">chan</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	addCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		ret := <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">"address======="</span></span><br><span class="line">		&#125;</span><br><span class="line">		addCh &lt;- ret()</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> addCh</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSel</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> ret := &lt;-userInfo():</span><br><span class="line">		t.Log(ret)</span><br><span class="line">	<span class="comment">//case ret := &lt;- addressInfo():</span></span><br><span class="line">	<span class="comment">//	t.Log(ret)</span></span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(time.Second):</span><br><span class="line">		t.Error(<span class="string">"time out"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>channel 的广播和关闭</strong></p>
+<blockquote>
+<p>定义两个 协程，一个往channel放数据，一个往channel取数据，channel放完后 close(channel)，获取的一方 判断时候正常获取。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">provider</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>, wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">200</span>; i++ &#123;</span><br><span class="line">			ch &lt;- i</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(ch)</span><br><span class="line">		wg.Done()</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">receiver</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>, wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> data,ok := &lt;- ch; ok&#123;</span><br><span class="line">				fmt.Print(data,<span class="string">" "</span>)</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		wg.Done()</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestChClose</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	provider(ch,&amp;wg)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	receiver(ch,&amp;wg)</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	receiver(ch,&amp;wg)</span><br><span class="line">	wg.Wait()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>任务取消</strong></p>
+<ul>
+<li><strong>context</strong><br>// TODO</li>
+</ul>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-数组和切片</title>
+    <url>/2020/06/17/go-%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87/</url>
+    <content><![CDATA[<p><strong>数组声明和遍历</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArrayInit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> arr [<span class="number">3</span>]<span class="keyword">int</span></span><br><span class="line">	arr1 := [<span class="number">4</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	arr2 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	t.Log(arr[<span class="number">0</span>], arr[<span class="number">1</span>])</span><br><span class="line">	t.Log(arr1,arr2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArrayTravel</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	arr3 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">	<span class="keyword">for</span> i,e := <span class="keyword">range</span> arr3&#123;</span><br><span class="line">		t.Log(i,e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<p><strong>数组截取</strong></p>
+<ul>
+<li>a[开始索引(包含),结束索引(不包含)]</li>
+<li>a[3:],a[:3] </li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestArraySection</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	arr3 := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;</span><br><span class="line">	arr3_sec := arr3[<span class="number">3</span>:]</span><br><span class="line">	t.Log(arr3_sec)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片slice</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceInit</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slice []<span class="keyword">int</span></span><br><span class="line">	t.Log(<span class="built_in">len</span>(slice), <span class="built_in">cap</span>(slice))</span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">1</span>)</span><br><span class="line">	t.Log(<span class="built_in">len</span>(slice), <span class="built_in">cap</span>(slice))</span><br><span class="line"></span><br><span class="line">	s1 := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	t.Log(<span class="built_in">len</span>(s1), <span class="built_in">cap</span>(s1))</span><br><span class="line"></span><br><span class="line">	s2 := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line">	t.Log(<span class="built_in">len</span>(s2), <span class="built_in">cap</span>(s2))</span><br><span class="line">	t.Log(s2[<span class="number">0</span>], s2[<span class="number">1</span>], s2[<span class="number">2</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片扩容</strong></p>
+<blockquote>
+<p>容量会 *2 扩展</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceGrowing</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s []<span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		s = <span class="built_in">append</span>(s, i)</span><br><span class="line">		t.Log(<span class="built_in">len</span>(s),<span class="built_in">cap</span>(s))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>切片共享存储结构</strong></p>
+<blockquote>
+<p>修改一个值会影响到其他的值</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSliceShareMemory</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	year := []<span class="keyword">string</span>&#123;</span><br><span class="line">		<span class="string">"一月"</span>, <span class="string">"二月"</span>, <span class="string">"三月"</span>, <span class="string">"四月"</span>,</span><br><span class="line">		<span class="string">"五月"</span>, <span class="string">"六月"</span>, <span class="string">"七月"</span>, <span class="string">"八月"</span>,</span><br><span class="line">		<span class="string">"九月"</span>, <span class="string">"十月"</span>, <span class="string">"十一月"</span>, <span class="string">"十二月"</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	Q2 := year[<span class="number">3</span>:<span class="number">6</span>]</span><br><span class="line">	t.Log(Q2, <span class="built_in">len</span>(Q2), <span class="built_in">cap</span>(Q2))</span><br><span class="line">	summer := year[<span class="number">5</span>:<span class="number">8</span>]</span><br><span class="line">	t.Log(summer,<span class="built_in">len</span>(summer),<span class="built_in">cap</span>(summer))</span><br><span class="line">	summer[<span class="number">0</span>] = <span class="string">"Unknow"</span></span><br><span class="line">	t.Log(Q2)</span><br><span class="line">	t.Log(year)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>数组和切片的区别</strong></p>
+<ol>
+<li>容量是否可伸缩</li>
+<li>是否可以进行比较</li>
+</ol>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>java-使用google.zxing生成二维码</title>
+    <url>/2020/06/17/java-%E4%BD%BF%E7%94%A8google.zxing%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81/</url>
+    <content><![CDATA[<h3 id="1-导入maven依赖"><a href="#1-导入maven依赖" class="headerlink" title="1. 导入maven依赖"></a>1. 导入maven依赖</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.google.zxing&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.google.zxing&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;javase&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="2-二维码工具类"><a href="#2-二维码工具类" class="headerlink" title="2. 二维码工具类"></a>2. 二维码工具类</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.odp.api.common.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.google.zxing.BarcodeFormat;</span><br><span class="line"><span class="keyword">import</span> com.google.zxing.EncodeHintType;</span><br><span class="line"><span class="keyword">import</span> com.google.zxing.MultiFormatWriter;</span><br><span class="line"><span class="keyword">import</span> com.google.zxing.common.BitMatrix;</span><br><span class="line"><span class="keyword">import</span> com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.awt.image.BufferedImage;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span>: hou_fx</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>:</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Data</span>: created in  下午6:02 2019/11/28</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QRCodeUtil</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CHARSET = <span class="string">"utf-8"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BufferedImage <span class="title">createImage</span><span class="params">(String content, <span class="keyword">int</span> width, <span class="keyword">int</span> height )</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Hashtable&lt;EncodeHintType, Object&gt; hints = <span class="keyword">new</span> Hashtable&lt;EncodeHintType, Object&gt;();</span><br><span class="line">        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);</span><br><span class="line">        hints.put(EncodeHintType.CHARACTER_SET, CHARSET);</span><br><span class="line">        hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br><span class="line">        BitMatrix bitMatrix = <span class="keyword">new</span> MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, width, height,</span><br><span class="line">                hints);</span><br><span class="line">        width = bitMatrix.getWidth();</span><br><span class="line">        height = bitMatrix.getHeight();</span><br><span class="line">        BufferedImage image = <span class="keyword">new</span> BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; width; x++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; height; y++) &#123;</span><br><span class="line">                image.setRGB(x, y, bitMatrix.get(x, y) ? <span class="number">0xFF000000</span> : <span class="number">0xFFFFFFFF</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> image;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-生成二维码图片"><a href="#3-生成二维码图片" class="headerlink" title="3. 生成二维码图片"></a>3. 生成二维码图片</h3><pre><code>调用工具类生成二维码，返回BufferedImage,根据需求将图片转为需要的数据,如转为base64等、</code></pre><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ByteArrayOutputStream baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">BufferedImage image = QRCodeUtil.createImage(targetUrl, <span class="number">460</span>, <span class="number">460</span>);</span><br><span class="line">ImageIO.write(image, <span class="string">"PNG"</span>, baos);</span><br><span class="line">Base64.getEncoder().encodeToString(baos.toByteArray());</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-效果图"><a href="#4-效果图" class="headerlink" title="4. 效果图"></a>4. 效果图</h3><pre><code>在浏览器中，可用 data:image/png;base64 ,查看base64图片,如</code></pre><p><img src="/images/2020-06-17-18-39-53-image.png" alt></p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>二维码</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go-运算符</title>
+    <url>/2020/06/17/go-%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
+    <content><![CDATA[<ul>
+<li>Go 语言没有前置的 ++ – 如： ++1,–1</li>
+<li>用 == 比较数组</li>
+</ul>
+<ol>
+<li>相同维度数组且含有相同个数元素的数组才可以比较</li>
+<li>每个元都有相同的才相等<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestCompareArray</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	a := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	<span class="comment">//b := [...]int&#123;1, 2, 3, 4, 5&#125;</span></span><br><span class="line">	c := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	d := [...]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>&#125;</span><br><span class="line">	<span class="comment">//t.Log(a == b)</span></span><br><span class="line">	t.Log(a == c,a==d)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<a id="more"></a>
+<ul>
+<li>位运算符</li>
+</ul>
+<blockquote>
+<p>&amp;^ 按位清零，对于两个操作数来说，只要是右边位数为1，无论左边操作位数是0还是1，都会把左边位数清零，如果右边位数为0，那左边原来是什么就是什么</p>
+</blockquote>
+<p>1 &amp;^ 0 – 1</p>
+<p>1 &amp;^1 –0</p>
+<p>0 &amp;^1 –0</p>
+<p>0 &amp;^ 0 –0</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Readable = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span> <span class="comment">// 1 &lt;&lt; 0 = 1</span></span><br><span class="line">	Writable			<span class="comment">// 1 &lt;&lt; 1 = 2</span></span><br><span class="line">	Executable			<span class="comment">// 1 &lt;&lt; 2 = 4</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestBitClean</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	a := <span class="number">7</span> <span class="comment">// 0111</span></span><br><span class="line">	a = a&amp;^ Readable</span><br><span class="line">	t.Log(a&amp;Readable == Readable, a&amp;Writable == Writable, a&amp;Executable == Executable)</span><br><span class="line">	t.Log(a &amp;^ Readable)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>go-条件和循环</title>
+    <url>/2020/06/17/go-%E6%9D%A1%E4%BB%B6%E5%92%8C%E5%BE%AA%E7%8E%AF/</url>
+    <content><![CDATA[<p><strong>循环</strong></p>
+<ul>
+<li>只有一个 for 关键字</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// while循环</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestWhileLoop</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	n:=<span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> n&lt;<span class="number">5</span>  &#123;</span><br><span class="line">		t.Log(n)</span><br><span class="line">		n++</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>条件</strong></p>
+<a id="more"></a>
+<ul>
+<li>if 条件</li>
+</ul>
+<ol>
+<li>condition 表达式必须布尔值</li>
+<li>支持变量赋值：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if var declaration; condition&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>例：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestIf</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a:=<span class="number">1</span>==<span class="number">1</span>; a&#123;</span><br><span class="line">		t.Log(<span class="string">"1==1"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>switch条件</li>
+</ul>
+<ol>
+<li>条件表达式不限制为常量或者整数</li>
+<li>单个case中，可以出现多个结果选项，使用逗号分割</li>
+<li>于C ，java等规则相反，Go语言不需要使用break来明确退出一个case</li>
+<li>可以不设定switch之后的条件表达式，在这种情况下，整个switch结构与多个if…else…的逻辑作用等同</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSwitchMultiCase</span><span class="params">(t *testing.T)</span></span>  &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">switch</span> i &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>, <span class="number">2</span>:</span><br><span class="line">			t.Log(<span class="string">"Even"</span>)</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>, <span class="number">3</span>:</span><br><span class="line">			t.Log(<span class="string">"Odd"</span>)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			t.Log(<span class="string">"it is not 0-3"</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSwitchCaseCondition</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">switch</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> i%<span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">			t.Log(<span class="string">"Even"</span>)</span><br><span class="line">		<span class="keyword">case</span> i%<span class="number">2</span> == <span class="number">1</span>:</span><br><span class="line">			t.Log(<span class="string">"Odd"</span>)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			t.Log(<span class="string">"unknown"</span>)</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>生成微信小程序码</title>
+    <url>/2020/06/18/%E7%94%9F%E6%88%90%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%A0%81/</url>
+    <content><![CDATA[<h1 id="生成微信小程序码"><a href="#生成微信小程序码" class="headerlink" title="生成微信小程序码"></a>生成微信小程序码</h1><pre><code>通过查阅微信官方文档，得知获取微信小程序码有两个步骤：</code></pre><p> <a href="https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/qr-code/wxacode.getUnlimited.html" target="_blank" rel="noopener">wxacode.getUnlimited | 微信开放文档</a></p>
+<a id="more"></a>
+
+<h2 id="获取-AccessToken"><a href="#获取-AccessToken" class="headerlink" title="获取 AccessToken"></a>获取 AccessToken</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Supplier&lt;String&gt; <span class="title">getAccessToken</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> () -&gt; &#123;</span><br><span class="line">            String cacheAccess = redisTemplate.opsForValue().get(PLA_WX_ACCESS_PREFIX);</span><br><span class="line">            <span class="keyword">if</span> (StringUtils.isEmpty(cacheAccess)) &#123;</span><br><span class="line">                JSONObject result = WechatHttpsRequest.httpsRequest(ACCESS_TOKEN_URL, <span class="string">"POST"</span>, <span class="keyword">null</span>);</span><br><span class="line">                BizErrors.GET_WX_ACCESS_ERROR.ifNull(result.get(<span class="string">"access_token"</span>));</span><br><span class="line">                String accessToken = String.valueOf(result.get(<span class="string">"access_token"</span>));</span><br><span class="line">                redisTemplate.opsForValue().set(PLA_WX_ACCESS_PREFIX, accessToken, EXPIRES_IN, TimeUnit.SECONDS);</span><br><span class="line">                <span class="keyword">return</span> accessToken;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">return</span> cacheAccess;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取小程序码"><a href="#获取小程序码" class="headerlink" title="获取小程序码"></a>获取小程序码</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> requestUrl</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> requestBody</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> BufferedImage</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@Author</span>: Hou_fx</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@Date</span>: 2019/11/20 下午3:48</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@Description</span>: 生成微信小程序二维码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BufferedImage <span class="title">createQRCode</span><span class="params">(String requestUrl, String requestBody)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        HttpPost httpPost = <span class="keyword">new</span> HttpPost(requestUrl);<span class="comment">// 创建httpPost</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            StringEntity stringEntity = <span class="keyword">new</span> StringEntity(requestBody, <span class="string">"UTF-8"</span>);</span><br><span class="line">            stringEntity.setContentType(<span class="string">"application/json;charset=UTF-8"</span>);</span><br><span class="line">            httpPost.setEntity(stringEntity);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sendHttpPost(httpPost);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> BufferedImage <span class="title">sendHttpPost</span><span class="params">(HttpPost httpPost)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        BufferedImage responseContent;</span><br><span class="line">        <span class="keyword">try</span> (CloseableHttpClient httpClient = HttpClients.createDefault();</span><br><span class="line">             CloseableHttpResponse response = httpClient.execute(httpPost)</span><br><span class="line">        ) &#123;</span><br><span class="line">            HttpEntity entity = response.getEntity();</span><br><span class="line">            httpPost.setConfig(requestConfig);</span><br><span class="line">            String resultContent = <span class="string">"json"</span>;</span><br><span class="line">            HeaderElement[] elements = entity.getContentType().getElements();</span><br><span class="line">            <span class="keyword">for</span> (HeaderElement ele : Arrays.asList(elements)) &#123;</span><br><span class="line">                <span class="keyword">if</span> (String.valueOf(ele).contains(resultContent)) &#123;</span><br><span class="line">                    log.error(EntityUtils.toString(entity, <span class="string">"utf-8"</span>));</span><br><span class="line">                    JSONObject res = JSONObject.parseObject(EntityUtils.toString(entity, <span class="string">"utf-8"</span>));</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> BizException(res.getString(<span class="string">"errCode"</span>), res.getString(<span class="string">"errMsg"</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            responseContent = ImageIO.read(<span class="keyword">new</span> ByteArrayInputStream(EntityUtils.toByteArray(entity)));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> responseContent;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<pre><code>返回的是 BufferedImage ,可根据需求转换其他类型</code></pre><h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img src="https://user-gold-cdn.xitu.io/2020/6/18/172c655634583dcc?w=1575&h=822&f=png&s=189638" alt="UTOOLS1592465384263.png"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>微信开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(转)正则表达式全集</title>
+    <url>/2020/06/18/%E5%B8%B8%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
+    <content><![CDATA[<p><a href="https://tool.oschina.net/uploads/apidocs/jquery/regexp.html" target="_blank" rel="noopener">转自：正则表达式手册</a></p>
+<a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>\</td>
+<td>将下一个字符标记为一个特殊字符、或一个原义字符、或一个向后引用、或一个八进制转义符。例如，“<code>n</code>”匹配字符“<code>n</code>”。“<code>\n</code>”匹配一个换行符。串行“<code>\\</code>”匹配“<code>\</code>”而“<code>\(</code>”则匹配“<code>(</code>”。</td>
+</tr>
+<tr>
+<td>^</td>
+<td>匹配输入字符串的开始位置。如果设置了RegExp对象的Multiline属性，^也匹配“<code>\n</code>”或“<code>\r</code>”之后的位置。</td>
+</tr>
+<tr>
+<td>$</td>
+<td>匹配输入字符串的结束位置。如果设置了RegExp对象的Multiline属性，$也匹配“<code>\n</code>”或“<code>\r</code>”之前的位置。</td>
+</tr>
+<tr>
+<td>*</td>
+<td>匹配前面的子表达式零次或多次。例如，zo<em>能匹配“<code>z</code>”以及“<code>zoo</code>”。</em>等价于{0,}。</td>
+</tr>
+<tr>
+<td>+</td>
+<td>匹配前面的子表达式一次或多次。例如，“<code>zo+</code>”能匹配“<code>zo</code>”以及“<code>zoo</code>”，但不能匹配“<code>z</code>”。+等价于{1,}。</td>
+</tr>
+<tr>
+<td>?</td>
+<td>匹配前面的子表达式零次或一次。例如，“<code>do(es)?</code>”可以匹配“<code>does</code>”或“<code>does</code>”中的“<code>do</code>”。?等价于{0,1}。</td>
+</tr>
+<tr>
+<td>{n}</td>
+<td>n是一个非负整数。匹配确定的n次。例如，“<code>o{2}</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但是能匹配“<code>food</code>”中的两个o。</td>
+</tr>
+<tr>
+<td>{n,}</td>
+<td>n是一个非负整数。至少匹配n次。例如，“<code>o{2,}</code>”不能匹配“<code>Bob</code>”中的“<code>o</code>”，但能匹配“<code>foooood</code>”中的所有o。“<code>o{1,}</code>”等价于“<code>o+</code>”。“<code>o{0,}</code>”则等价于“<code>o*</code>”。</td>
+</tr>
+<tr>
+<td>{n,m}</td>
+<td>m和n均为非负整数，其中n&lt;=m。最少匹配n次且最多匹配m次。例如，“<code>o{1,3}</code>”将匹配“<code>fooooood</code>”中的前三个o。“<code>o{0,1}</code>”等价于“<code>o?</code>”。请注意在逗号和两个数之间不能有空格。</td>
+</tr>
+<tr>
+<td>?</td>
+<td>当该字符紧跟在任何一个其他限制符（*,+,?，{n}，{n,}，{n,m}）后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串“<code>oooo</code>”，“<code>o+?</code>”将匹配单个“<code>o</code>”，而“<code>o+</code>”将匹配所有“<code>o</code>”。</td>
+</tr>
+<tr>
+<td>.</td>
+<td>匹配除“<code>\``n</code>”之外的任何单个字符。要匹配包括“<code>\``n</code>”在内的任何字符，请使用像“<code>(.|\n)</code>”的模式。</td>
+</tr>
+<tr>
+<td>(pattern)</td>
+<td>匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中则使用$0…$9属性。要匹配圆括号字符，请使用“<code>\(</code>”或“<code>\)</code>”。</td>
+</tr>
+<tr>
+<td>(?:pattern)</td>
+<td>匹配pattern但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。这在使用或字符“<code>(|)</code>”来组合一个模式的各个部分是很有用。例如“<code>industr(?:y|ies)</code>”就是一个比“<code>industry|industries</code>”更简略的表达式。</td>
+</tr>
+<tr>
+<td>(?=pattern)</td>
+<td>正向肯定预查，在任何匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如，“<code>Windows(?=95|98|NT|2000)</code>”能匹配“<code>Windows2000</code>”中的“<code>Windows</code>”，但不能匹配“<code>Windows3.1</code>”中的“<code>Windows</code>”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。</td>
+</tr>
+<tr>
+<td>(?!pattern)</td>
+<td>正向否定预查，在任何不匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如“<code>Windows(?!95|98|NT|2000)</code>”能匹配“<code>Windows3.1</code>”中的“<code>Windows</code>”，但不能匹配“<code>Windows2000</code>”中的“<code>Windows</code>”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始</td>
+</tr>
+<tr>
+<td>(?&lt;=pattern)</td>
+<td>反向肯定预查，与正向肯定预查类拟，只是方向相反。例如，“<code>(?&lt;=95|98|NT|2000)Windows</code>”能匹配“<code>2000Windows</code>”中的“<code>Windows</code>”，但不能匹配“<code>3.1Windows</code>”中的“<code>Windows</code>”。</td>
+</tr>
+<tr>
+<td>(?&lt;!pattern)</td>
+<td>反向否定预查，与正向否定预查类拟，只是方向相反。例如“<code>(?&lt;!95|98|NT|2000)Windows</code>”能匹配“<code>3.1Windows</code>”中的“<code>Windows</code>”，但不能匹配“<code>2000Windows</code>”中的“<code>Windows</code>”。</td>
+</tr>
+<tr>
+<td>x|y</td>
+<td>匹配x或y。例如，“<code>z|food</code>”能匹配“<code>z</code>”或“<code>food</code>”。“<code>(z|f)ood</code>”则匹配“<code>zood</code>”或“<code>food</code>”。</td>
+</tr>
+<tr>
+<td>[xyz]</td>
+<td>字符集合。匹配所包含的任意一个字符。例如，“<code>[abc]</code>”可以匹配“<code>plain</code>”中的“<code>a</code>”。</td>
+</tr>
+<tr>
+<td>[^xyz]</td>
+<td>负值字符集合。匹配未包含的任意字符。例如，“<code>[^abc]</code>”可以匹配“<code>plain</code>”中的“<code>p</code>”。</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>字符范围。匹配指定范围内的任意字符。例如，“<code>[a-z]</code>”可以匹配“<code>a</code>”到“<code>z</code>”范围内的任意小写字母字符。</td>
+</tr>
+<tr>
+<td>[^a-z]</td>
+<td>负值字符范围。匹配任何不在指定范围内的任意字符。例如，“<code>[^a-z]</code>”可以匹配任何不在“<code>a</code>”到“<code>z</code>”范围内的任意字符。</td>
+</tr>
+<tr>
+<td>\b</td>
+<td>匹配一个单词边界，也就是指单词和空格间的位置。例如，“<code>er\b</code>”可以匹配“<code>never</code>”中的“<code>er</code>”，但不能匹配“<code>verb</code>”中的“<code>er</code>”。</td>
+</tr>
+<tr>
+<td>\B</td>
+<td>匹配非单词边界。“<code>er\B</code>”能匹配“<code>verb</code>”中的“<code>er</code>”，但不能匹配“<code>never</code>”中的“<code>er</code>”。</td>
+</tr>
+<tr>
+<td>\cx</td>
+<td>匹配由x指明的控制字符。例如，\cM匹配一个Control-M或回车符。x的值必须为A-Z或a-z之一。否则，将c视为一个原义的“<code>c</code>”字符。</td>
+</tr>
+<tr>
+<td>\d</td>
+<td>匹配一个数字字符。等价于[0-9]。</td>
+</tr>
+<tr>
+<td>\D</td>
+<td>匹配一个非数字字符。等价于[^0-9]。</td>
+</tr>
+<tr>
+<td>\f</td>
+<td>匹配一个换页符。等价于\x0c和\cL。</td>
+</tr>
+<tr>
+<td>\n</td>
+<td>匹配一个换行符。等价于\x0a和\cJ。</td>
+</tr>
+<tr>
+<td>\r</td>
+<td>匹配一个回车符。等价于\x0d和\cM。</td>
+</tr>
+<tr>
+<td>\s</td>
+<td>匹配任何空白字符，包括空格、制表符、换页符等等。等价于[ \f\n\r\t\v]。</td>
+</tr>
+<tr>
+<td>\S</td>
+<td>匹配任何非空白字符。等价于[^ \f\n\r\t\v]。</td>
+</tr>
+<tr>
+<td>\t</td>
+<td>匹配一个制表符。等价于\x09和\cI。</td>
+</tr>
+<tr>
+<td>\v</td>
+<td>匹配一个垂直制表符。等价于\x0b和\cK。</td>
+</tr>
+<tr>
+<td>\w</td>
+<td>匹配包括下划线的任何单词字符。等价于“<code>[A-Za-z0-9_]</code>”。</td>
+</tr>
+<tr>
+<td>\W</td>
+<td>匹配任何非单词字符。等价于“<code>[^A-Za-z0-9_]</code>”。</td>
+</tr>
+<tr>
+<td>\xn</td>
+<td>匹配n，其中n为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，“<code>\x41</code>”匹配“<code>A</code>”。“<code>\x041</code>”则等价于“<code>\x04&amp;1</code>”。正则表达式中可以使用ASCII编码。.</td>
+</tr>
+<tr>
+<td>\num</td>
+<td>匹配num，其中num是一个正整数。对所获取的匹配的引用。例如，“<code>(.)\1</code>”匹配两个连续的相同字符。</td>
+</tr>
+<tr>
+<td>\n</td>
+<td>标识一个八进制转义值或一个向后引用。如果\n之前至少n个获取的子表达式，则n为向后引用。否则，如果n为八进制数字（0-7），则n为一个八进制转义值。</td>
+</tr>
+<tr>
+<td>\nm</td>
+<td>标识一个八进制转义值或一个向后引用。如果\nm之前至少有nm个获得子表达式，则nm为向后引用。如果\nm之前至少有n个获取，则n为一个后跟文字m的向后引用。如果前面的条件都不满足，若n和m均为八进制数字（0-7），则\nm将匹配八进制转义值nm。</td>
+</tr>
+<tr>
+<td>\nml</td>
+<td>如果n为八进制数字（0-3），且m和l均为八进制数字（0-7），则匹配八进制转义值nml。</td>
+</tr>
+<tr>
+<td>\un</td>
+<td>匹配n，其中n是一个用四个十六进制数字表示的Unicode字符。例如，\u00A9匹配版权符号（©）。</td>
+</tr>
+</tbody></table>
+<h2 id="常用正则表达式"><a href="#常用正则表达式" class="headerlink" title="常用正则表达式"></a>常用正则表达式</h2><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户名</td>
+<td>/^[a-z0-9_-]{3,16}$/</td>
+</tr>
+<tr>
+<td>密码</td>
+<td>/^[a-z0-9_-]{6,18}$/</td>
+</tr>
+<tr>
+<td>十六进制值</td>
+<td>/^#?([a-f0-9]{6}|[a-f0-9]{3})$/</td>
+</tr>
+<tr>
+<td>电子邮箱</td>
+<td>/^([a-z0-9_.-]+)@([\da-z.-]+).([a-z.]{2,6})$/<br>/^[a-z\d]+(.[a-z\d]+)*@(<a href="-[\da-z]">\da-z</a>?)+(.{1,2}[a-z]+)+$/</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>/^(https?://)?([\da-z.-]+).([a-z.]{2,6})([/\w .-]<em>)</em>/?$/</td>
+</tr>
+<tr>
+<td>IP 地址</td>
+<td>/((2[0-4]\d|25[0-5]|[01]?\d\d?).){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)/<br>/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/</td>
+</tr>
+<tr>
+<td>HTML 标签</td>
+<td>/^&lt;([a-z]+)([^&lt;]+)<em>(?:&gt;(.</em>)&lt;/\1&gt;|\s+/&gt;)$/</td>
+</tr>
+<tr>
+<td>删除代码\注释</td>
+<td>(?&lt;!http:|\S)//.*$</td>
+</tr>
+<tr>
+<td>Unicode编码中的汉字范围</td>
+<td>/^[\u2E80-\u9FFF]+$/</td>
+</tr>
+</tbody></table>
+]]></content>
+      <tags>
+        <tag>正则表达式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go-Hello World</title>
+    <url>/2020/06/17/go-hello-world/</url>
+    <content><![CDATA[<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main <span class="comment">// 包，声明代码所在的木块</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span> <span class="comment">//引入代码依赖</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123; <span class="comment">// 功能实现</span></span><br><span class="line">	fmt.Println(<span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<blockquote>
+<p>应用程序入口</p>
+</blockquote>
+<ul>
+<li>必须是main包</li>
+<li>必须是main方法</li>
+<li>文件名不一定是main.go</li>
+</ul>
+<p> <strong>与其他语言的差异</strong></p>
+<blockquote>
+<p>退出返回值</p>
+</blockquote>
+<ul>
+<li>go 中main函数不支持任何返回值</li>
+<li>通过 os.exit来返回状态</li>
+</ul>
+<blockquote>
+<p>获取命令行参数</p>
+</blockquote>
+<ul>
+<li>main函数不支持传入参数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func main(arg [] string)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在程序中直接通过 os.Args 获取命令行参数</li>
+</ul>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>centos 安装 docker</title>
+    <url>/2020/06/19/centos%E5%AE%89%E8%A3%85docker/</url>
+    <content><![CDATA[<p>docker 是一种开源容器化技术，用于构建和容器化应用程序</p>
+<a id="more"></a>
+
+<h1 id="centos-安装-docker"><a href="#centos-安装-docker" class="headerlink" title="centos 安装 docker"></a>centos 安装 docker</h1><h2 id="安装yum-utils"><a href="#安装yum-utils" class="headerlink" title="安装yum-utils"></a>安装yum-utils</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y yum-utils</span><br></pre></td></tr></table></figure>
+
+<h2 id="设置存储库"><a href="#设置存储库" class="headerlink" title="设置存储库"></a>设置存储库</h2><pre><code>自行选择源</code></pre><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 官方源</span></span><br><span class="line">yum-config-manager \</span><br><span class="line">--add-repo \</span><br><span class="line">https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line"></span><br><span class="line"><span class="comment">## 阿里云</span></span><br><span class="line">yum-config-manager \</span><br><span class="line">--add-repo \</span><br><span class="line">http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-docker"><a href="#安装-docker" class="headerlink" title="安装 docker"></a>安装 docker</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动-docker"><a href="#启动-docker" class="headerlink" title="启动 docker"></a>启动 docker</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<pre><code>运行 hello-world 验证是否安装成功</code></pre><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考官方文档"><a href="#参考官方文档" class="headerlink" title="参考官方文档"></a>参考官方文档</h2><p><a href="https://docs.docker.com/engine/install/centos/" target="_blank" rel="noopener">Install Docker Engine on CentOS | Docker Documentation</a></p>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-compose安装与使用</title>
+    <url>/2020/06/19/docker-compose%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="docker-compose安装与使用"><a href="#docker-compose安装与使用" class="headerlink" title="docker-compose安装与使用"></a>docker-compose安装与使用</h1><pre><code>Compose是用于定义和运行多容器Docker应用程序的工具。通过Compose，您可以使用YAML文件来配置应用程序的服务。然后，使用一个命令，就可以从配置中创建并启动所有服务.</code></pre><a id="more"></a>
+
+<h2 id="前置条件"><a href="#前置条件" class="headerlink" title="前置条件"></a>前置条件</h2><p>肯定是需要安装docker了。。。</p>
+<h2 id="docker-compose-安装"><a href="#docker-compose-安装" class="headerlink" title="docker-compose 安装"></a>docker-compose 安装</h2><ol>
+<li>运行以下命令以下载Docker Compose的当前稳定版本:</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo curl -L <span class="string">"https://github.com/docker/compose/releases/download/1.26.0/docker-compose-<span class="variable">$(uname -s)</span>-<span class="variable">$(uname -m)</span>"</span> -o /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>将可执行权限应用于 docker-compose 二进制文件</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo chmod +x /usr/<span class="built_in">local</span>/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>测试安装</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker-compose --version</span><br></pre></td></tr></table></figure>
+
+<h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><ol>
+<li>编写 docker-compose.yml 文件，如下所示：（这是一个网易云音乐客户端无版权代理到其他平台的小工具，推荐！）</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"> <span class="attr">1 version:</span> <span class="string">'3'</span></span><br><span class="line"> <span class="number">2</span> </span><br><span class="line"> <span class="attr">3 services:</span></span><br><span class="line"> <span class="attr">4   unblockneteasemusic:</span></span><br><span class="line"> <span class="attr">5     image:</span> <span class="string">nondanee/unblockneteasemusic</span></span><br><span class="line"> <span class="attr">6     container_name:</span> <span class="string">neteasemusic</span></span><br><span class="line"> <span class="attr">7     restart:</span> <span class="string">always</span></span><br><span class="line"> <span class="attr">8     environment:</span></span><br><span class="line"> <span class="attr">9       NODE_ENV:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">10     command:</span> <span class="string">-p</span> <span class="number">2233</span></span><br><span class="line"><span class="attr">11     ports:</span></span><br><span class="line"><span class="number">12</span>       <span class="bullet">-</span> <span class="number">2233</span><span class="string">:2233</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>docker-compose up -d</li>
+</ol>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo博客框架-安装</title>
+    <url>/2020/06/19/hexo%E5%8D%9A%E5%AE%A2%E6%A1%86%E6%9E%B6-%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<pre><code>hexo 是一个快速、简洁且高效的博客框架。hexo使用Markdown解析文章，在几秒内，即可利用靓丽的主题生成静态网页.</code></pre><a id="more"></a>
+
+<h2 id="方式一：-参考官方文档"><a href="#方式一：-参考官方文档" class="headerlink" title="方式一： 参考官方文档"></a>方式一： 参考官方文档</h2><ul>
+<li><p>安装前提</p>
+<blockquote>
+<ol>
+<li>node.js &gt; 8.10,建议10.0+版本</li>
+<li>Git </li>
+</ol>
+</blockquote>
+</li>
+<li><p>安装 hexo</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>初始化 hexo</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo init blog</span><br><span class="line">$ <span class="built_in">cd</span> blog</span><br><span class="line">$ hexo install</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动 hexo</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>访问 ip:4000即可看到</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/19/172cbad2f1f7a4af?w=1885&h=988&f=png&s=530336" alt="UTOOLS1592555022132.png"></p>
+<h2 id="方式二：docker部署"><a href="#方式二：docker部署" class="headerlink" title="方式二：docker部署"></a>方式二：docker部署</h2><ol>
+<li>编写 docker-compose.yml</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">24   blog:</span></span><br><span class="line"><span class="attr">25     image:</span> <span class="string">zeusro/hexo</span></span><br><span class="line"><span class="attr">26     container_name:</span> <span class="string">blog</span></span><br><span class="line"><span class="attr">27     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">28     ports:</span></span><br><span class="line"><span class="number">29</span>       <span class="bullet">-</span> <span class="number">4000</span><span class="string">:4000</span></span><br></pre></td></tr></table></figure>
+
+<p>执行<code>docker-compose up -d</code>，可以访问到了，下一步目录挂载</p>
+<ol start="2">
+<li>挂载目录</li>
+</ol>
+<ul>
+<li><p>/data/blog 是我存放的目录，我是整个目录挂载，可根据需求，自行变更</p>
+<p> 执行 <code>docker exec blog ls /</code> 可以看到，需要挂载的目录是 docker-hexo </p>
+<p> <img src="https://user-gold-cdn.xitu.io/2020/6/19/172cbb1fb6041a85?w=645&h=408&f=png&s=11908" alt="UTOOLS1592555337252.png"></p>
+</li>
+</ul>
+<p>先将 容器里的 hexo 文件复制出来 <code>docker cp blog:/docker-hexo .</code>，这是复制到当前目录</p>
+<blockquote>
+<p>命令解释： docker cp 容器:需要复制的目录 宿主机目录</p>
+</blockquote>
+<p>最终yml如下：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">24   blog:</span></span><br><span class="line"><span class="attr">25     image:</span> <span class="string">zeusro/hexo</span></span><br><span class="line"><span class="attr">26     container_name:</span> <span class="string">blog</span></span><br><span class="line"><span class="attr">27     restart:</span> <span class="string">always</span></span><br><span class="line"><span class="attr">28     ports:</span></span><br><span class="line"><span class="number">29</span>       <span class="bullet">-</span> <span class="number">4000</span><span class="string">:4000</span></span><br><span class="line"><span class="attr">30     volumes:</span></span><br><span class="line"><span class="number">31</span>       <span class="bullet">-</span> <span class="string">/data/blog:/docker-hexo</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>docker-compose up -d</p>
+</li>
+<li><p>访问ip:4000，效果同上</p>
+</li>
+</ol>
+<p>// TODO 主题修改，自行参考官方文档</p>
+<p><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="noopener">文档 | Hexo</a></p>
+]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+</search>
