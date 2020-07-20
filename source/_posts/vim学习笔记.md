@@ -46,7 +46,7 @@ dd 删除整行
 CTRL+ [ 退出insert模式
 gi 由normal模式进入最后编辑的位置
 
-### 插件管理
+## 插件管理
 
 使用`vim-plug`进行插件管理
 
@@ -57,7 +57,7 @@ curl -fLo ~/.var/app/io.neovim.nvim/data/nvim/site/autoload/plug.vim \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
 
-### 键位映射
+## 键位映射
 
 | &lt;k0&gt; - &lt;k9&gt; | 小键盘 0 到 9       |
 | ----------------------- | --------------- |
@@ -73,3 +73,7 @@ curl -fLo ~/.var/app/io.neovim.nvim/data/nvim/site/autoload/plug.vim \
 | &lt;Left&gt;            | 光标左移            |
 | &lt;Down&gt;            | 光标下移            |
 | &lt;Right&gt;           | 光标右移            |
+
+## 我的vim配置
+
+[GitHub - Fxuing/vimrc: vimrc](https://github.com/Fxuing/vimrc)
