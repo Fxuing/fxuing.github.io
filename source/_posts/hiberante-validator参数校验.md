@@ -9,7 +9,7 @@ tags:
 
 ### hibernate validator
 
-我们经常需要对参数进行校验，很多情况下都是一个个参数校验，这种校验方式虽然也达到了效果，但是看起来就比较别扭。而且如果接收参数为`map`的时候，不太好处理，我在网上找资料也没有找到符合我情况的资料，于是去`hibernate`官网翻了下文档，再次分享下思路。
+我们经常需要对参数进行校验，很多情况下都是一个个参数校验，这种校验方式虽然也达到了效果，但是看起来就比较别扭。而且如果接收参数为`map`的时候，不太好处理，我在网上找资料也没有找到符合我情况的资料，于是去`hibernate`官网翻了下文档，在此分享下思路。
 
 <!-- more -->
 
@@ -135,3 +135,5 @@ public class ExceptionsHandler {
 **总结**
 
 这种方式与大部分资料不同的是，现在大部分的处理方式都是在 `controller` 调用的地方使用`@Valid`注解，然后使用`BindingResult`操作，通过全局异常处理，这种方式不需要使用`@Valid`注解和`BindingResult`，相同点是，也是通过全局异常处理，可随地使用，如果是`Map`的话，先转为`java bean`再对`java bean`操作即可
+
+最后贴一下参考文档：https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#section-validating-bean-constraints
