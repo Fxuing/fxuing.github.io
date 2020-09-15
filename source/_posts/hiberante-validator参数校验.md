@@ -39,13 +39,13 @@ public class RoleInfo implements Serializable {
    @TableId(type = IdType.AUTO)
    private Long id;
    /** 角色名 */
-   @NotNull(message = &quot;角色名称不能为空&quot;)
+   @NotNull(message = "角色名称不能为空")
    private String roleName;
    /** 角色编号 */
-   @NotNull(message = &quot;角色编号不能为空&quot;)
+   @NotNull(message = "角色编号不能为空")
    private String roleCode;
    /** 系统编号 */
-   @NotNull(message = &quot;系统编号不能为空&quot;)
+   @NotNull(message = "系统编号不能为空")
    private String sysCode;
 }
 
