@@ -73,10 +73,10 @@ public class ValidatorUtil {
 
     }
 
-    public static &lt;T&gt; void validator(T checkObject) {
+    public static <T> void validator(T checkObject) {
         init();
-        Set&lt;ConstraintViolation&lt;T&gt;&gt; res = validator.validate(checkObject);
-        res.forEach(f -&gt; {
+        Set<ConstraintViolation<T>> res = validator.validate(checkObject);
+        res.forEach(f -> {
             throw new BizException(ResponseStatus.PARAMS_INVALIDE.getCode(), f.getMessage());
         });
     }
