@@ -1,5 +1,5 @@
 ---
-title: docker-compose安装与使用
+title: Go 实现短链接服务
 date: 2020年9月23日
 comments: true
 categories: go
