@@ -57,7 +57,7 @@ BaseServiceImpl：
 
 有分页参数和条件参数 == 条件搜索+分页查询
 
-![](C:\Users\HOUFUXING\AppData\Roaming\marktext\images\2020-10-12-16-21-20-image.png)
+![0Rw96H.png](https://s1.ax1x.com/2020/10/12/0Rw96H.png)
 
 哦对，使用也非常简单，只需要:
 
