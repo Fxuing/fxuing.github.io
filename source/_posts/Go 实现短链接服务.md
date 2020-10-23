@@ -113,6 +113,12 @@ location /slink/short {
 }
 ```
 
+### 效果图
+
+![BAF83Q.png](https://s1.ax1x.com/2020/10/23/BAF83Q.png)
+
+`data.short` 就是短链接啦，访问试一下吧！
+
 项目地址：https://github.com/Fxuing/short-link
 
 
