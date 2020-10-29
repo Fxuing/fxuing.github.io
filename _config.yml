@@ -4,7 +4,7 @@
 
 # Site
 title: 一只秋田犬
-subtitle: —— 记录日常开发
+subtitle: 
 description: 
 keywords: java,javaee,spring,springboot,go,golang,gorm,gin,一只秋田犬
 author: Houfx
@@ -82,3 +82,8 @@ deploy:
 
 ######
 theme: next
+# admin
+admin:
+  username: houfx
+  password_hash: $2a$10$L.jetirVrNdIVOpE5F/v4u1F7Tb54.n3ZFs961sbRRik93wXiHevG 
+  secret:  
